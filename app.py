@@ -28,13 +28,8 @@ app.add_middleware(
 templates = Jinja2Templates(directory="templates")
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return {"message": "Hello World"}
-
-
-@app.get("/v2ray", response_class=HTMLResponse)
-def v2ray(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("index.html", context=context)
 
