@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import requests
@@ -35,23 +35,18 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", context=context)
 
 
-@app.get("/sub")
-def sub(request: Request, response_class=HTMLResponse):
-    return HTMLResponse(get_b64sub())
+@app.get("/sub", response_class=PlainTextResponse)
+def sub(request: Request):
+    return PlainTextResponse(get_b64sub())
 
 
-@app.get("/cors")
-def cors(request: Request, url: Optional[str] = None):
-    if url is None:
-        url = "https://upload.wikimedia.org/wikipedia/zh/7/77/Rickrolling_YouTube_RickAstleyVEVO_20150720.png"
-        host = f"{request.base_url.scheme}://{request.base_url.netloc}"
-        context = {
-            "message": "No URL specified",
-            "usage": "{HOST}/cors?url={URL}",
-            "example": host + "/cors?url=" + url,
-        }
-        return context
+@app.get("/cors", response_class=Response)
+def cors(request: Request, url: str):
 
+    try:
+        requests.head(url, timeout=3)
+    except Exception as e:
+        return PlainTextResponse(str(e))
 
     def stream():
         response = requests.get(url, stream=True)
