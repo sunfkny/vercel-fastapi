@@ -37,7 +37,15 @@ def index(request: Request):
 @app.get("/cors")
 def cors(request: Request, url: Optional[str] = None):
     if url is None:
-        return {"code": 0, "usage": "{HOST}/cors?url={URL}"}
+        url = "https://upload.wikimedia.org/wikipedia/zh/7/77/Rickrolling_YouTube_RickAstleyVEVO_20150720.png"
+        host = f"{request.base_url.scheme}://{request.base_url.netloc}"
+        context = {
+            "message": "No URL specified",
+            "usage": "{HOST}/cors?url={URL}",
+            "example": host + "/cors?url=" + url,
+        }
+        return context
+
 
     def stream():
         response = requests.get(url, stream=True)
