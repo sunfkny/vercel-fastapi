@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 
+from utils.v2ray_sub import get_b64sub
 
 app = FastAPI()
 app.add_middleware(
@@ -32,6 +33,11 @@ templates = Jinja2Templates(directory="templates")
 def index(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("index.html", context=context)
+
+
+@app.get("/sub")
+def sub(request: Request, response_class=HTMLResponse):
+    return HTMLResponse(get_b64sub())
 
 
 @app.get("/cors")
