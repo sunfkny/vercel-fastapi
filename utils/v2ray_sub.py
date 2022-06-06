@@ -1,6 +1,6 @@
 import requests
 import re
-import time
+import arrow
 import base64
 
 def get_sub():
@@ -11,8 +11,9 @@ def get_sub():
     v2ray = requests.get("https://www.youhou8.com/v2ray").content.decode("utf8")
     v2ray_info = [line for line in v2ray.split("\n") if line.find("pwd") != -1]
     pattern = re.compile("(?<=<b>)(.*?)(?=</b>)")
-    date_str = time.strftime("%m-%d_%H:%M", time.localtime())
-    remarks = 'zkq8_' + date_str
+    now = arrow.now("Asia/Shanghai")
+    datetime_str = now.format("MM-DD_HH:mm")
+    remarks = 'zkq8_' + datetime_str
     sub = ""
     sub_list = []
     for i, line in enumerate(v2ray_info):
