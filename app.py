@@ -50,7 +50,7 @@ def cors(request: Request, url: str):
 
     def stream():
         response = requests.get(url, stream=True)
-        for chunk in response.iter_content(chunk_size=1024):
+        for chunk in response.iter_content(chunk_size=4 * 1024):
             if chunk:
                 yield chunk
 
