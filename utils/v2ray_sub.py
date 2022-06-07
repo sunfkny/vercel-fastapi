@@ -1,9 +1,13 @@
+from typing import List
 import requests
 import re
 import arrow
 import base64
+from collections import namedtuple
 
-def get_sub():
+TrojanEndpoint = namedtuple("TrojanEndpoint", ["address", "port", "password", "remarks"])
+
+def get_sub() -> List[TrojanEndpoint]:
     pwd_list = []
     pwd_list.append(requests.get("https://www.youhou8.com/pwd1").content.decode("utf8").strip())
     pwd_list.append(requests.get("https://www.youhou8.com/pwd2").content.decode("utf8").strip())
@@ -14,7 +18,6 @@ def get_sub():
     now = arrow.now("Asia/Shanghai")
     datetime_str = now.format("MM-DD_HH:mm")
     remarks = 'zkq8_' + datetime_str
-    sub = ""
     sub_list = []
     for i, line in enumerate(v2ray_info):
         trojan = pattern.findall(line)
@@ -23,8 +26,8 @@ def get_sub():
         address = trojan[1]
         port = trojan[3]
         password = pwd_list[i]
-        sub_list.append([address, port, password, remarks])
-        sub += f"trojan://{password}@{address}:{port}#{remarks}\n"
+        # sub_list.append([address, port, password, remarks])
+        sub_list.append(TrojanEndpoint(address=address, port=port, password=password, remarks=remarks))
     print(sub_list)
     return sub_list
 
@@ -32,8 +35,11 @@ def get_sub():
 def get_b64sub():
     sub = ""
     sub_list = get_sub()
-    for address, port, password, remarks in sub_list:
-        sub += f"trojan://{password}@{address}:{port}#{remarks}\n"
+    for i in sub_list:
+        sub += f"trojan://{i.password}@{i.address}:{i.port}#{i.remarks}\n"
     b64sub = base64.b64encode(bytes(sub, encoding="utf8")).decode("utf8")
-    # print(b64sub)
+    print(b64sub)
     return b64sub
+
+if __name__=="__main__":
+    get_b64sub()
