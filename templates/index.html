@@ -7,23 +7,18 @@
     <link rel="icon" href="data:;base64,=">
 
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
-    <!-- <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
 
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-    <!-- <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script> -->
     <script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
-    <!-- <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script> -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
 
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
-    <!-- <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
     <!-- 剪贴板 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script> -->
     <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
 
     <script>
@@ -41,28 +36,39 @@
 </head>
 
 <body class="my-3">
-    <!--     <div class="container">
-        <div class="row clearfix">
-            <div class="col-12 column">
-                <h3>
-                    <a href="https://www.youhou8.com/group/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91">Free V2ray/Trojan</a>
-                </h3>
-            </div>
-        </div>
-    </div> -->
     <div class="container">
         <div class="row clearfix">
             <div class="col-12 column">
-                <div id="info" class="my-3"></div>
+                <div id="info" class="my-3">
+                    <div class="alert alert-success">{{message|safe}}</div>
+                </div>
             </div>
         </div>
     </div>
     <div class="container">
         <div class="row clearfix">
             <div class="col-12 column">
-                <div id="div1"></div>
-                <table id="table1" style="margin-bottom: 0;" style="display: none;">
+
+                <table id="table1" style="margin-bottom: 0px;" class="table table-bordered">
                     <tbody>
+                        <tr>
+                            <th>server</th>
+                            <th>password</th>
+                            <th>port</th>
+                            <th>count</th>
+                        </tr>
+                        <tr>
+                            <td style="cursor: pointer;">{{server1}}</td>
+                            <td style="cursor: pointer;">{{password1}}</td>
+                            <td style="cursor: pointer;">{{port1}}</td>
+                            <td style="cursor: pointer;">{{count1}}</td>
+                        </tr>
+                        <tr>
+                            <td style="cursor: pointer;">{{server2}}</td>
+                            <td style="cursor: pointer;">{{password2}}</td>
+                            <td style="cursor: pointer;">{{port2}}</td>
+                            <td style="cursor: pointer;">{{count2}}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -76,21 +82,6 @@
         </div>
     </div>
     <script language="javascript" type="text/javascript">
-
-        function timestamp(url) {
-            // use timestamp to disable cache
-            var getTimestamp = new Date().getTime();
-            url = url + "&timestamp=" + getTimestamp
-            return url;
-        }
-
-        function cors(url) {
-            // url = "https://pd.zwc365.com/seturl/" + url;
-            // 自建cors
-            url = window.location.origin + "/cors?url=" + url;
-            return url;
-        }
-
         function copyof(jspath) {
             console.log($(jspath)[0]);
             clipboard = new ClipboardJS(jspath, { text: function () { return $(jspath).text().replace("\n", ""); } });
@@ -134,100 +125,24 @@
             }
         }
 
-        function parseDom(arg) {
-            var objE = document.createElement("div");
-            objE.innerHTML = arg;
-            // return objE.childNodes;
-            return objE;
-        };
-
-        function getTrojan_list(str) {
-            let domstr = "";
-            domstr = str;
-            trojan_list = [];
-            // var re = new RegExp("(?<=<b>)[^<]*(?=</b>)", "g");
-            var re = new RegExp("(?<=<b>)(.*?)(?=</b>)", "g");
-            for (i of domstr.split("\n")) {
-                if (i.indexOf("pwd") >= 0) {
-                    res = i.match(re);
-                    trojan_list.push([res[1], res[2], res[3]]);
-                }
-            }
-
-            tables = [];
-            for (trojan of trojan_list) {
-                // tables.push([trojan[0], trojan[1], trojan[2]])
-                tables.push([trojan[0], "加载中", trojan[2]])
-            }
-            return tables
-
-        }
-
         $(document).ready(function () {
-            $('#div1').append($(`<div class="alert alert-info"></div>`).append("加载中..."));
-
-            $("#div1").load(cors("https://www.youhou8.com/v2ray"), function (response, status, xhr) {
-            // $("#div1").load(cors("https://www.zkq8.com/v2ray2_link.txt"), function (response, status, xhr) {
-
-
-                $("#div1").hide();
-                $("#div1 > table").addClass("table table-bordered");
-
-
-                // console.group("content of https://www.youhou8.com/v2ray");
-                console.group("content of https://www.zkq8.com/v2ray2_link.txt");
-                window.resdom = parseDom(response);
-                console.log(resdom);
-                tip = "";
-                for (i of resdom.children) {
-                    if (i.tagName == "P") {
-                        tip += i.innerText + "<br>"
-                    }
-                }
-                $('#info').append($(`<div class="alert alert-success"></div>`).append(tip));
+            $("#table1").addClass("table table-bordered");
+            rownum = $("#table1 > tbody > tr").length;
+            for (var i = 2; i <= rownum; i++) {
+                let server = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(1)";
+                let password = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(2)";
+                let port = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(3)";
+                console.group("init copy of tr: " + i);
+                copyof(server);
+                copyof(password);
+                copyof(port);
                 console.groupEnd();
-
-
-                $("#table1").hide();
-                console.group("torjan list");
-                trojan_list = getTrojan_list(response);
-                th = "<tr><th>server</th><th>password</th><th>port</th></tr>"
-                $("#table1 > tbody").append(th);
-                for (trojan of trojan_list) {
-                    console.log(trojan);
-                    html = `<tr><td>${trojan[0]}</td><td>${trojan[1]}</td><td>${trojan[2]}</td></tr>`;
-                    $("#table1 > tbody").append(html);
-                }
-                console.groupEnd();
-                $("#table1").show();
-
-
-                // $("#table1 > tbody > tr:nth-child(2) > td:nth-child(2)").load(cors("https://www.youhou8.com/pwd1"));
-                // $("#table1 > tbody > tr:nth-child(3) > td:nth-child(2)").load(cors("https://www.youhou8.com/pwd2"));
-                $("#table1 > tbody > tr:nth-child(2) > td:nth-child(2)").load(cors("https://www.zkq8.com/trojan_pwd1.txt"));
-                $("#table1 > tbody > tr:nth-child(3) > td:nth-child(2)").load(cors("https://www.zkq8.com/trojan_pwd2.txt"));
-
-
-                $("#table1").addClass("table table-bordered");
-                rownum = $("#table1 > tbody > tr").length;
-                for (var i = 2; i <= rownum; i++) {
-                    let server = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(1)";
-                    let password = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(2)";
-                    let port = "#table1 > tbody > tr:nth-child(" + i + ") > td:nth-child(3)";
-                    console.group("init copy of tr: " + i);
-                    copyof(server);
-                    copyof(password);
-                    copyof(port);
-                    console.groupEnd();
-                }
-                showTip("<strong>提示：</strong>点击可直接复制", "info");
-
-            });
-
+            }
+            showTip("<strong>提示：</strong>点击可直接复制", "info");
 
         });
+
     </script>
 </body>
-
 
 </html>

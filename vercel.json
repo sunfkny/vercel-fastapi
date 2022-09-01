@@ -5,6 +5,7 @@
 	"routes": [
 		{ "src": "/", "dest": "app.py" },
 		{ "src": "/sub", "dest": "app.py" },
+		{ "src": "/sub1", "dest": "app.py" },
 		{ "src": "/cors", "dest": "app.py" },
 		{ "src": "/docs", "dest": "app.py" },
 		{ "src": "/openapi.json", "dest": "app.py" }
