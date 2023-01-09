@@ -1,3 +1,4 @@
+import asyncio
 import re
 from typing import Optional
 
@@ -34,31 +35,34 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     async with httpx.AsyncClient() as client:
-        pwd1 = (await client.get("https://www.youhou8.com/pwd1")).content.decode("utf8").strip()
-        pwd2 = (await client.get("https://www.youhou8.com/pwd2")).content.decode("utf8").strip()
-        count1 = (await client.get("https://www.youhou8.com/count1")).content.decode("utf8").strip()
-        count2 = (await client.get("https://www.youhou8.com/count2")).content.decode("utf8").strip()
-        v2ray = (await client.get("https://www.youhou8.com/v2ray")).content.decode("utf8")
-        port1, port2 = "", ""
-        port_list = re.findall(r"<b>([1-9][0-9]+)</b>", v2ray)
-        if len(port_list) == 2:
-            port1, port2 = port_list
-        message_list = re.findall(r"<p.*?>(.+)</p>", v2ray)
-        message = "".join(message_list)
+        pwd1_req = client.get("https://www.youhou8.com/pwd1")
+        pwd2_req = client.get("https://www.youhou8.com/pwd2")
+        count1_req = client.get("https://www.youhou8.com/count1")
+        count2_req = client.get("https://www.youhou8.com/count2")
+        v2ray_req = client.get("https://www.youhou8.com/v2ray")
 
-        context = dict(
-            request=request,
-            message=message,
-            server1="www.youhou8.gq",
-            server2="www.youhou8.ml",
-            password1=pwd1,
-            password2=pwd2,
-            port1=port1,
-            port2=port2,
-            count1=count1,
-            count2=count2,
-        )
-        return templates.TemplateResponse("index.html", context=context)
+        results_future = asyncio.gather(pwd1_req, pwd2_req, count1_req, count2_req, v2ray_req)
+
+        results = await results_future
+        pwd1, pwd2, count1, count2, v2ray = [result.content.decode("utf8").strip() for result in results]
+
+    port1, port2 = "", ""
+    host1, host2 = "www.youhou8.gq", "www.youhou8.ml"
+    port_list = re.findall(r"<b>([1-9][0-9]+)</b>", v2ray)
+    if len(port_list) == 2:
+        port1, port2 = port_list
+    message_list = re.findall(r"<p.*?>(.+)</p>", v2ray)
+    message = "".join(message_list)
+
+    context = dict(
+        request=request,
+        message=message,
+        servers=[
+            {"host": host1, "port": port1, "password": pwd1, "count": count1},
+            {"host": host2, "port": port2, "password": pwd2, "count": count2},
+        ],
+    )
+    return templates.TemplateResponse("index.html", context=context)
 
 
 @app.get("/sub", response_class=PlainTextResponse)

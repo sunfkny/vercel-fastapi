@@ -52,23 +52,19 @@
                 <table id="table1" style="margin-bottom: 0px;" class="table table-bordered">
                     <tbody>
                         <tr>
-                            <th>server</th>
+                            <th>host</th>
                             <th>password</th>
                             <th>port</th>
                             <th>count</th>
                         </tr>
+                        {% for server in servers %}
                         <tr>
-                            <td style="cursor: pointer;">{{server1}}</td>
-                            <td style="cursor: pointer;">{{password1}}</td>
-                            <td style="cursor: pointer;">{{port1}}</td>
-                            <td>{{count1}}</td>
+                            <td style="cursor: pointer;">{{server.host}}</td>
+                            <td style="cursor: pointer;">{{server.password}}</td>
+                            <td style="cursor: pointer;">{{server.port}}</td>
+                            <td>{{server.count}}</td>
                         </tr>
-                        <tr>
-                            <td style="cursor: pointer;">{{server2}}</td>
-                            <td style="cursor: pointer;">{{password2}}</td>
-                            <td style="cursor: pointer;">{{port2}}</td>
-                            <td>{{count2}}</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
