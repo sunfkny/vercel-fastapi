@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 
 from utils.v2ray_sub import get_b64sub, get_b64sub1
+from utils.v2rayse_sub import get_v2rayse_sub
 
 app = FastAPI()
 app.add_middleware(
@@ -73,6 +74,11 @@ async def sub(request: Request):
 @app.get("/sub1", response_class=PlainTextResponse)
 async def sub1(request: Request):
     return PlainTextResponse(await get_b64sub1())
+
+
+@app.get("/v2rayse")
+async def api_v2rayse(v2ray: bool = False):
+    return PlainTextResponse(await get_v2rayse_sub())
 
 
 @app.get("/cors", response_class=Response)
