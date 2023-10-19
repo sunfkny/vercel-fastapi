@@ -77,7 +77,7 @@ async def sub1(request: Request):
 
 
 @app.get("/v2rayse")
-async def api_v2rayse(v2ray: bool = False):
+async def api_v2rayse(request: Request):
     return PlainTextResponse(await get_v2rayse_sub())
 
 
